@@ -163,7 +163,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Author
 
-Developed by Ing. Gonzalo Novoa
+Developed by Gonzalo Novoa
 
 ## Acknowledgments
 
