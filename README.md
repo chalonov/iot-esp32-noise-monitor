@@ -30,6 +30,8 @@ The system provides comprehensive noise monitoring capabilities including:
 
 ### Pin Configuration
 
+<img src="images/schematics.png" width="600">
+
 #### INMP441 Microphone
 - WS (Word Select/LRCLK): GPIO 15
 - SD (Serial Data): GPIO 13
@@ -122,6 +124,8 @@ The system calculates several metrics:
 
 ## ThingSpeak Integration
 
+<img src="images/architecture.png" width="600">
+
 Data is uploaded to ThingSpeak for long-term storage and analysis:
 
 1. Connects to ThingSpeak server
@@ -163,7 +167,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Author
 
-Developed by Ing. Gonzalo Novoa
+Developed by Gonzalo Novoa
 
 ## Acknowledgments
 
