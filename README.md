@@ -177,4 +177,30 @@ Developed by Gonzalo Novoa
 
 For additional information or support, please open an issue in the repository.
 
+## Publication
+
+The article presents the development and testing of this ESP32-based IoT device for noise monitoring in non-industrial contexts, demonstrating its effectiveness for environmental sound level measurement and real-time data collection through cloud integration. This IoT noise monitoring device has been documented and validated in a peer-reviewed academic publication:
+
+### Research Article
+
+**Title:** Prototipo de dispositivo de IoT para monitoreo del ruido en contextos no industriales
+
+**Authors:** Y. Castro-Cely, G. R. Novoa-Fernández, B. R. Aragón-Rentería, y M. A. Espitia-Pineda
+
+**Journal:** Salud, Trabajo y Sostenibilidad (Consejo Colombiano de Seguridad)
+
+**Publication Details:**
+- Volume: 2, Issue: 1
+- Pages: 43–55
+- Date: July 2025
+- DOI/URL: https://publicaciones.ccs.org.co/index.php/sts/article/view/16
+
+### IEEE Citation Format
+
+```
+Y. Castro-Cely, G. R. Novoa-Fernández, B. R. Aragón-Rentería, y M. A. Espitia-Pineda, 
+«Prototipo de dispositivo de IoT para monitoreo del ruido en contextos no industriales», 
+Salud, Trabajo y Sostenibilidad (Consejo Colombiano de Seguridad), vol. 2, n.º 1, pp. 43–55, jul. 2025.
+```
+
 
