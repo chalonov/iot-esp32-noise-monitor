@@ -1,6 +1,6 @@
 # ESP32 IoT Noise Monitor
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
 ![Project Status](https://img.shields.io/badge/status-active-success.svg)
 ![Platform](https://img.shields.io/badge/platform-ESP32-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -161,6 +161,37 @@ To modify or extend this project:
 3. Test thoroughly
 4. Submit a pull request
 
+## Changelog
+
+### [1.1.0] - 2025-09-02
+
+#### Added
+- Text management system with PROGMEM optimization for better memory usage
+- Centralized text storage in `src/texts.h` for improved maintainability
+- Foundation for multi-language support capability
+- Memory optimization for ESP32's limited RAM resources
+
+#### Changed
+- Refactored all display and debug text strings to separate header file
+- Updated deprecated I2S communication format from legacy to standard format
+- Improved code organization with better separation of concerns
+- Enhanced project architecture for future scalability
+
+#### Fixed
+- Resolved I2S deprecation warnings in ESP32 framework
+- Optimized memory allocation by moving strings to flash storage
+- Improved code maintainability and consistency
+
+### [1.0.0] - 2024-12-12
+
+#### Added
+- Initial release of ESP32 IoT Noise Monitor
+- Real-time sound level measurement and display
+- WiFi connectivity and ThingSpeak cloud integration
+- OLED display with status indicators
+- Rolling average calculations (1-minute and all-time)
+- Complete hardware integration (INMP441 microphone, SSD1306 display)
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
@@ -202,5 +233,3 @@ Y. Castro-Cely, G. R. Novoa-Fernández, B. R. Aragón-Rentería, y M. A. Espitia
 «Prototipo de dispositivo de IoT para monitoreo del ruido en contextos no industriales», 
 Salud, Trabajo y Sostenibilidad (Consejo Colombiano de Seguridad), vol. 2, n.º 1, pp. 43–55, jul. 2025.
 ```
-
-

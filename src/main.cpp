@@ -14,6 +14,8 @@
 #include <Adafruit_SSD1306.h>
 // WiFi & Thinkspeak login
 #include <secrets.h>
+// Textos del sistema
+#include "texts.h"
 
 // Parametros OLED Display SSD1306
 #define SCREEN_WIDTH 128
@@ -53,6 +55,7 @@ const int myChannelNumber = SECRET_myChannelNumber;
 const char* myApiKey = SECRET_myApiKey;
 const char* server = "api.thingspeak.com";
 
+
 // 'wifi', 16x16px
 const unsigned char wifi_icon [] PROGMEM = {
 	0x00, 0x00, 0x00, 0x00, 0x0f, 0xf0, 0x3f, 0xfc, 0x70, 0x0e, 0xe7, 0xe7, 0x1f, 0xf8, 0x38, 0x1c, 
@@ -87,16 +90,16 @@ WiFiClient client;
 // i2s configuracion
 void i2s_install() {
   const i2s_config_t i2s_config = {
-    .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX), // Maestro y solo recepción
-    .sample_rate = SAMPLE_RATE,         // Frecuencia de muestreo de 44.1kHz
-    .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,  // 16 bits por muestra
-    .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,   // Solo el canal izquierdo
-    .communication_format = (i2s_comm_format_t)(I2S_COMM_FORMAT_I2S | I2S_COMM_FORMAT_I2S_MSB),
-    .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,      // Prioridad de la interrupción
-    .dma_buf_count = 8,                            // Cantidad de buffers DMA
-    .dma_buf_len = 64,                             // Tamaño de cada buffer DMA
-    .use_apll = false,                             // No usar APLL
-    .tx_desc_auto_clear = false,                   // Deshabilitar auto-limpieza de TX
+    .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX),
+    .sample_rate = SAMPLE_RATE,
+    .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
+    .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
+    .communication_format = I2S_COMM_FORMAT_STAND_I2S, // Actualizado
+    .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
+    .dma_buf_count = 8,
+    .dma_buf_len = 64,
+    .use_apll = false,
+    .tx_desc_auto_clear = false,
     .fixed_mclk = 0
   };
 
@@ -105,10 +108,10 @@ void i2s_install() {
 
 void i2s_setpin() {
   const i2s_pin_config_t pin_config = {
-    .bck_io_num = I2S_SCK,    // Pin del reloj de bits
-    .ws_io_num = I2S_WS,      // Pin del word select (LRCLK)
-    .data_out_num = I2S_PIN_NO_CHANGE, // Deshabilitar salida de datos (no se usa)
-    .data_in_num = I2S_SD     // Pin de entrada de datos
+    .bck_io_num = I2S_SCK,
+    .ws_io_num = I2S_WS,
+    .data_out_num = I2S_PIN_NO_CHANGE,
+    .data_in_num = I2S_SD
   };
 
   i2s_set_pin(I2S_PORT, &pin_config);
@@ -122,10 +125,18 @@ void displayText(uint8_t textSize, uint16_t textColor, int16_t x, int16_t y, con
   display.println(message);
 }
 
+// Función helper para mostrar texto desde PROGMEM
+void displayTextProgmem(uint8_t textSize, uint16_t textColor, int16_t x, int16_t y, const char* text) {
+  display.setTextSize(textSize);
+  display.setTextColor(textColor);
+  display.setCursor(x, y);
+  display.println((__FlashStringHelper*)text);
+}
+
 // main setup
 void setup() {
   Serial.begin(115200);
-  Serial.println("Setup I2S ...");
+  Serial.println((__FlashStringHelper*)TEXT_SETUP_I2S);
 
   // Instalar y configurar I2S
   i2s_install();
@@ -133,14 +144,14 @@ void setup() {
 
   i2s_start(I2S_PORT); 
 
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x64
-    Serial.println(F("SSD1306 allocation failed"));
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    Serial.println((__FlashStringHelper*)TEXT_SSD1306_FAILED);
     for(;;);
   }
 
-  // Screen 1
+  // Screen 1 - Conectando
   display.clearDisplay();
-  displayText(1, SSD1306_WHITE, 24, 24, F("Connecting..."));
+  displayTextProgmem(1, SSD1306_WHITE, 24, 24, TEXT_CONNECTING);
   display.display();
   delay(1500); 
 
@@ -148,34 +159,34 @@ void setup() {
   WiFi.begin(WIFI_NAME, WIFI_PASSWORD);
   while (WiFi.status() != WL_CONNECTED){
     delay(1000);
-    Serial.println("Wifi not connected");
+    Serial.println((__FlashStringHelper*)TEXT_WIFI_NOT_CONNECTED_DEBUG);
 
     display.clearDisplay();
-    displayText(1, SSD1306_WHITE, 0, 24, F("Wifi not connected"));
+    displayTextProgmem(1, SSD1306_WHITE, 0, 24, TEXT_WIFI_NOT_CONNECTED);
     display.display();
   }
-  Serial.println("Wifi connected !");
-  Serial.println("Local IP: " + String(WiFi.localIP()));
+  Serial.println((__FlashStringHelper*)TEXT_WIFI_CONNECTED_DEBUG);
+  Serial.print((__FlashStringHelper*)TEXT_LOCAL_IP_DEBUG);
+  Serial.println(WiFi.localIP());
 
-  // Screen 2
+  // Screen 2 - WiFi conectado
   display.clearDisplay();
-  displayText(1, SSD1306_WHITE, 0, 24, F("Wifi connected!"));
-  displayText(1, SSD1306_WHITE, 0, 46, "Local IP: " + String(WiFi.localIP()));
+  displayTextProgmem(1, SSD1306_WHITE, 0, 24, TEXT_WIFI_CONNECTED);
+  displayText(1, SSD1306_WHITE, 0, 46, String((__FlashStringHelper*)TEXT_LOCAL_IP) + String(WiFi.localIP()));
   display.display();
   delay(1500); 
 
   WiFi.mode(WIFI_STA);
   ThingSpeak.begin(client);
 
-  // Screen 3
+  // Screen 3 - Pantalla de presentación
   display.clearDisplay();
-  displayText(1, SSD1306_WHITE, 30, 0, F("NOISE MONITOR"));
-  displayText(2, SSD1306_WHITE, 24, 24, F("SST-IoT"));
-  displayText(1, SSD1306_WHITE, 0, 46, F("Developed by:"));
-  displayText(1, SSD1306_WHITE, 0, 56, F("Ing. Gonzalo Novoa"));
+  displayTextProgmem(1, SSD1306_WHITE, 30, 0, TEXT_NOISE_MONITOR);
+  displayTextProgmem(2, SSD1306_WHITE, 24, 24, TEXT_SST_IOT);
+  displayTextProgmem(1, SSD1306_WHITE, 0, 46, TEXT_DEVELOPED_BY);
+  displayTextProgmem(1, SSD1306_WHITE, 0, 56, TEXT_AUTHOR);
   display.display();
   delay(2000);
-  
 }
 
 void loop() {
@@ -206,7 +217,7 @@ void loop() {
 
   if (sample_count > 0) {
     float currentDB = round((total_db / sample_count) * 10.0) / 10.0;
-    Serial.printf("Promedio de dB (2s): %.1f dB\n", currentDB);
+    Serial.printf(TEXT_DB_AVERAGE_FORMAT, currentDB);
     
     // Actualizar promedio general
     totalSamples++;
@@ -228,11 +239,11 @@ void loop() {
 
     display.setTextSize(2);
     display.setCursor(84, 26);
-    display.print(" dB");
+    display.print((__FlashStringHelper*)TEXT_DB_UNIT);
 
     display.setTextSize(1);
     display.setCursor(0, 4);
-    display.print(currentDB >= DB_THRESHOLD ? "Lvl: HIGH" : "Lvl: LOW");
+    display.print((__FlashStringHelper*)(currentDB >= DB_THRESHOLD ? TEXT_LEVEL_HIGH : TEXT_LEVEL_LOW));
 
     // Verificar la conexión WiFi
     if (WiFi.status() == WL_CONNECTED) {
@@ -244,13 +255,13 @@ void loop() {
       int x = ThingSpeak.writeFields(myChannelNumber,myApiKey);
 
       if(x == 200){
-        Serial.println("Data pushed successfully");
+        Serial.println((__FlashStringHelper*)TEXT_DATA_PUSHED);
         display.drawBitmap(80, 0, upload_icon, 16, 16, WHITE);
       } else {
-        Serial.println("Push error" + String(x));
+        Serial.print((__FlashStringHelper*)TEXT_PUSH_ERROR);
+        Serial.println(String(x));
       }    
     } else {
-      // Si no hay conexión WiFi, mostramos el icono de WiFi tachado
       display.drawBitmap(112, 0, wifi_disconnected_icon, 16, 16, WHITE);
     }
 
@@ -260,34 +271,31 @@ void loop() {
     // Mostrar promedio general y promedio del último minuto
     display.setTextSize(1);
     display.setCursor(0, SCREEN_HEIGHT - 20);
-    display.print("Avg(All):");
+    display.print((__FlashStringHelper*)TEXT_AVG_ALL);
     display.print(overallAverageDB, 1);
-    display.print("dB");
+    display.print((__FlashStringHelper*)TEXT_DB_SUFFIX);
     
     display.setCursor(0, SCREEN_HEIGHT - 10);
-    display.print("Avg(1min):");
+    display.print((__FlashStringHelper*)TEXT_AVG_1MIN);
     display.print(lastMinuteAverageDB, 1);
-    display.print("dB");
+    display.print((__FlashStringHelper*)TEXT_DB_SUFFIX);
 
   } else {
-    Serial.println("No se registraron muestras válidas");
+    Serial.println((__FlashStringHelper*)TEXT_NO_VALID_SAMPLES);
 
     display.setTextSize(1);
     display.setCursor(36, 0);
-    display.print("Disconnected");
+    display.print((__FlashStringHelper*)TEXT_DISCONNECTED);
 
     display.setTextSize(2);
     display.setCursor(24, 16);
-    display.print("No Data");
+    display.print((__FlashStringHelper*)TEXT_NO_DATA);
 
-    // Mostramos el icono de WiFi tachado si no hay conexión
     if (WiFi.status() != WL_CONNECTED) {
       display.drawBitmap(112, 0, wifi_disconnected_icon, 16, 16, WHITE);
     }
   }
 
   display.display();
-
-  // Tiempo antes de la próxima lectura (ms)
   delay(1000);  
 }
